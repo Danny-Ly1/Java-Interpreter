@@ -88,6 +88,19 @@ public class Lox {
         hadError = true;
     }
 
+    /**
+     * Shows the error to the user.
+     * @param token that is causing the error.
+     * @param message to show to the user.
+     */
+    static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
+    }
+
 
 
 }

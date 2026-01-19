@@ -6,6 +6,9 @@ import static lox.TokenType.*;
 
 
 public class Parser {
+    // Sentinel class used to unwind the parser
+    private static class ParseError extends RuntimeException {}
+
     private final List<Token> tokens;
     private int current = 0;
 
@@ -111,11 +114,6 @@ public class Parser {
     }
 
 
-
-
-
-
-
     /**
      * Checks to see if the current token has any of the given types.
      * @param types of token.
@@ -130,6 +128,19 @@ public class Parser {
         }
 
         return false;
+    }
+
+
+    /**
+     * Consume the closing bracket if any.
+     * @param type of token being consumed.
+     * @param message for the error if it occurs.
+     * @return the token that will be consumed.
+     */
+    private Token consume(TokenType type, String message) {
+        if (check(type)) return advance();
+
+        throw error(peek(), message);
     }
 
     /**
@@ -177,6 +188,17 @@ public class Parser {
      */
     private Token previous() {
         return tokens.get(current - 1);
+    }
+
+    /**
+     * Report an error.
+     * @param token that is being reported.
+     * @param message to show user if there's an error.
+     * @return a ParseError object.
+     */
+    private ParseError error(Token token, String message) {
+        Lox.error(token, message);
+        return new ParseError();
     }
 
 
