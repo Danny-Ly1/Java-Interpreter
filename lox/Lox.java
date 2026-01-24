@@ -57,13 +57,29 @@ public class Lox {
      * @param source The source from the user.
      */
     private static void run(String source) {
+//        Chapter 5 tests:
+//
+//        Scanner scanner = new Scanner(source);
+//        List<Token> tokens = scanner.scanTokens();
+//
+//        // For now, just print the tokens.
+//        for (Token token : tokens) {
+//            System.out.println(token);
+//        }
+
+//        Chapter 6 tests:
+//
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
 
-        // For now, just print the tokens.
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        // Stop if there was a syntax error.
+        if (hadError) return;
+
+        System.out.println(new AstPrinter().print(expression));
+
+
     }
 
     /**
