@@ -1,16 +1,19 @@
 package lox;
 
-public class Interpreter implements Expr.Visitor<Object>{
+import java.util.List;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     /**
      * Takes in a syntax tree for an expression and evaluates it.
-     * @param expression of the syntax tree to display to the user.
+     * @param statements) of the syntax tree to display to the user.
      */
-    void interpret(Expr expression) {
+    void interpret(List<Stmt> statements) {
         try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
-        } catch (RuntimeError error){
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } catch (RuntimeError error) {
             Lox.runtimeError(error);
         }
     }
@@ -162,5 +165,27 @@ public class Interpreter implements Expr.Visitor<Object>{
 
         return object.toString();
     }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+    /**
+     * Allows the interpreter to take in a Stmt object.
+     * @param stmt object.
+     */
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
+    }
+
 
 }
